@@ -68,5 +68,14 @@ def getBookGenres(ISBN):
 df = pd.read_csv('goodreads_library_export.csv')    
 df = cleanData(df)
 df['genres'] = df['ISBN13'].apply(lambda x: getBookGenres(x))
-df.to_pickle('goodreads_genres.pkl')
 
+#make a column for genres
+gs = df['genres'].values.tolist()
+flat_gs = [item for sublist in gs for item in sublist]
+unique_gs = list(set(flat_gs))
+
+#make a new entry for each genre the bok is categorized in
+df = df.explode('genres')
+df = df.explode('Bookshelves')
+
+df.to_pickle('goodreads_genres.pkl')
